@@ -5,7 +5,6 @@ import (
 	"net/http"
 )
 
-//Hello
-func GetAPIInfo(c echo.Context) error {
+func CreateDish(c echo.Context) error {
 	return c.String(http.StatusOK, "Service run normally")
 }
