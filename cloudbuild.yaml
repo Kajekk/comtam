@@ -1,8 +1,8 @@
 steps:
-  - id: 'run unit test'
-    name: 'gcr.io/cloud-builders/go'
-    args: ['test', './...']
-    env: ['PROJECT_ROOT=github.com/Kajekk/comtam']
+#  - id: 'run unit test'
+#    name: 'gcr.io/cloud-builders/go'
+#    args: ['test', './...']
+#    env: ['PROJECT_ROOT=github.com/Kajekk/comtam']
 
   - id: 'build image'
     name: 'gcr.io/cloud-builders/docker'
@@ -50,7 +50,7 @@ steps:
     args:
       - '-c'
       - |
-        kubectl set image deployment/app app=gcr.io/$PROJECT_ID/comtam-deployment:$SHORT_SHA
+        kubectl set image deployment/comtam comtam=gcr.io/$PROJECT_ID/comtam-deployment:$SHORT_SHA
     volumes:
       - name: 'kube'
         path: /kube
