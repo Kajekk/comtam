@@ -1,34 +1,70 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: comtam
   labels:
-    app: comtam
+    app: comtam-deployment
+  name: comtam-deployment
+  namespace: default
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: comtam
+      app: comtam-deployment
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   template:
     metadata:
       labels:
-        app: comtam
+        app: comtam-deployment
     spec:
       containers:
-        - name: comtam
-          image: gcr.io/$PROJECT_ID/comtam-deployment:latest
-          ports:
-            - containerPort: 8000
+        - image: gcr.io/comtam/github.com/kajekk/comtam
+          imagePullPolicy: IfNotPresent
+          name: comtam-deployment-sha256-1
 ---
-kind: Service
-apiVersion: v1
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
 metadata:
-  name: comtam
+  labels:
+    app: comtam-deployment
+  name: comtam-deployment-hpa-fgvl
+  namespace: default
 spec:
-  selector:
-    app: comtam
+  maxReplicas: 5
+  metrics:
+    - resource:
+        name: cpu
+        targetAverageUtilization: 80
+      type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: comtam-deployment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    cloud.google.com/neg: '{"ingress":true}'
+  finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app: comtam-deployment
+  name: comtam-deployment-service
+  namespace: default
+spec:
+  clusterIP: 10.108.2.22
+  externalTrafficPolicy: Cluster
   ports:
-    - protocol: TCP
+    - nodePort: 30701
       port: 80
+      protocol: TCP
       targetPort: 8000
+  selector:
+    app: comtam-deployment
+  sessionAffinity: None
   type: LoadBalancer
