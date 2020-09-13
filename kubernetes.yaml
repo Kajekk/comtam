@@ -21,9 +21,10 @@ spec:
         app: comtam-deployment
     spec:
       containers:
-        - image: gcr.io/comtam/github.com/kajekk/comtam
-          imagePullPolicy: IfNotPresent
-          name: comtam-deployment-sha256-1
+        - name: comtam-deployment
+          image: gcr.io/$PROJECT_ID/comtam-deployment:latest
+          ports:
+            - containerPort: 8000
 ---
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
@@ -48,23 +49,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    cloud.google.com/neg: '{"ingress":true}'
-  finalizers:
-    - service.kubernetes.io/load-balancer-cleanup
-  labels:
-    app: comtam-deployment
-  name: comtam-deployment-service
-  namespace: default
+  name: comtam-deployment
 spec:
-  clusterIP: 10.108.2.22
-  externalTrafficPolicy: Cluster
-  ports:
-    - nodePort: 30701
-      port: 80
-      protocol: TCP
-      targetPort: 8000
   selector:
     app: comtam-deployment
-  sessionAffinity: None
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
   type: LoadBalancer
