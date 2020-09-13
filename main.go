@@ -1,15 +1,18 @@
 package main
 
 import (
+	"crypto/tls"
 	"github.com/Kajekk/comtam/api"
 	"github.com/Kajekk/comtam/conf"
 	"github.com/Kajekk/comtam/model"
 	"github.com/globalsign/mgo"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"net"
 	"net/http"
 	"strings"
 	"time"
+	//"time"
 )
 
 func main() {
@@ -56,6 +59,12 @@ func setupDB() {
 		//Database: AuthDatabase,
 		Username: envConfig["dbUser"],
 		Password: envConfig["dbPassword"],
+	}
+
+	tlsConfig := &tls.Config{}
+	mainDB.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+		conn, err := tls.Dial("tcp", addr.String(), tlsConfig) // add TLS config
+		return conn, err
 	}
 	mainDBSession, err := mgo.DialWithInfo(mainDB)
 	if err != nil {
