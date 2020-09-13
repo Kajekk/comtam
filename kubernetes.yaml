@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comtam
+  labels:
+    app: comtam
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: comtam
+  template:
+    metadata:
+      labels:
+        app: comtam
+    spec:
+      containers:
+        - name: comtam
+          image: gcr.io/$PROJECT_ID/comtam-deployment:latest
+          ports:
+            - containerPort: 8000
+
+--------------
+kind: Service
+apiVersion: v1
+metadata:
+  name: comtam
+spec:
+  selector:
+    app: comtam
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: LoadBalancer
