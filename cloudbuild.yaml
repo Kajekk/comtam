@@ -17,6 +17,8 @@ steps:
 
   - id: 'push image'
     name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'gcr.io/$PROJECT_ID/comtam-deployment:$SHORT_SHA'
+    args: ['push',
+           'gcr.io/$PROJECT_ID/comtam-deployment:$SHORT_SHA']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push',
+           'gcr.io/$PROJECT_ID/comtam-deployment:latest']
