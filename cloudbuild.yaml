@@ -50,7 +50,7 @@ steps:
     args:
       - '-c'
       - |
-        kubectl set image deployment/comtam comtam=gcr.io/$PROJECT_ID/comtam-deployment:$SHORT_SHA
+        kubectl set image deployment/comtam-deployment comtam-deployment=gcr.io/$PROJECT_ID/comtam-deployment:$SHORT_SHA
     volumes:
       - name: 'kube'
         path: /kube
