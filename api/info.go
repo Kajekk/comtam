@@ -12,5 +12,5 @@ func GetAPIInfo(c echo.Context) error {
 
 //Hello
 func Hello(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello")
+	return c.String(http.StatusOK, "Bunjiu")
 }
