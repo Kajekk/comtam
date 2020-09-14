@@ -32,25 +32,16 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
-      - 'KUBECONFIG=/kube/config'
     entrypoint: 'sh'
     args:
       - '-c'
       - |
         gcloud container clusters get-credentials "$${CLOUDSDK_CONTAINER_CLUSTER}" --zone "$${CLOUDSDK_COMPUTE_ZONE}"
-    volumes:
-      - name: 'kube'
-        path: /kube
 
   - id: 'deploy to k8s'
     name: 'gcr.io/cloud-builders/gcloud'
-    env:
-      - 'KUBECONFIG=/kube/config'
     entrypoint: 'sh'
     args:
       - '-c'
       - |
         kubectl set image deployment/comtam-deployment comtam-deployment-sha256-1=gcr.io/$PROJECT_ID/comtam-deployment:$SHORT_SHA
-    volumes:
-      - name: 'kube'
-        path: /kube
